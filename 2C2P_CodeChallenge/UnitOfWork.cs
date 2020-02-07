@@ -9,7 +9,7 @@ namespace _2C2P_CodeChallenge
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private Entities _context = new Entities();
+        private TransactionEntity _context = new TransactionEntity();
         private readonly Dictionary<Type, object> _repositories;
 
         public UnitOfWork()

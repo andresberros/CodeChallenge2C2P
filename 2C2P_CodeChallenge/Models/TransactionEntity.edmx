@@ -5,103 +5,45 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="C2P_CodeChallengeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Statuses">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nchar" MaxLength="10" />
-        </EntityType>
         <EntityType Name="Transactions">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TransactionId" Type="nchar" MaxLength="50" Nullable="false" />
           <Property Name="Amount" Type="decimal" Precision="18" Scale="0" Nullable="false" />
           <Property Name="CurrencyCode" Type="nchar" MaxLength="3" Nullable="false" />
           <Property Name="TransactionDate" Type="datetime" Nullable="false" />
-          <Property Name="StatusId" Type="int" Nullable="false" />
+          <Property Name="Status" Type="nchar" MaxLength="10" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Transactions_ToStatuses">
-          <End Role="Statuses" Type="Self.Statuses" Multiplicity="1" />
-          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Statuses">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Transactions">
-              <PropertyRef Name="StatusId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="C2P_CodeChallengeModelStoreContainer">
-          <EntitySet Name="Statuses" EntityType="Self.Statuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Transactions_ToStatuses" Association="Self.FK_Transactions_ToStatuses">
-            <End Role="Statuses" EntitySet="Statuses" />
-            <End Role="Transactions" EntitySet="Transactions" />
-          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="C2P_CodeChallengeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Status">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <NavigationProperty Name="Transactions" Relationship="Self.FK_Transactions_ToStatuses" FromRole="Statuses" ToRole="Transactions" />
-        </EntityType>
         <EntityType Name="Transaction">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TransactionId" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
           <Property Name="Amount" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
           <Property Name="CurrencyCode" Type="String" MaxLength="3" FixedLength="true" Unicode="true" Nullable="false" />
           <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="StatusId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Status" Relationship="Self.FK_Transactions_ToStatuses" FromRole="Transactions" ToRole="Statuses" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Transactions_ToStatuses">
-          <End Role="Statuses" Type="Self.Status" Multiplicity="1" />
-          <End Role="Transactions" Type="Self.Transaction" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Statuses">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Transactions">
-              <PropertyRef Name="StatusId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Statuses" EntityType="Self.Status" />
+        <EntityContainer Name="TransactionEntity" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Transactions" EntityType="Self.Transaction" />
-          <AssociationSet Name="FK_Transactions_ToStatuses" Association="Self.FK_Transactions_ToStatuses">
-            <End Role="Statuses" EntitySet="Statuses" />
-            <End Role="Transactions" EntitySet="Transactions" />
-          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="C2P_CodeChallengeModelStoreContainer" CdmEntityContainer="Entities">
-          <EntitySetMapping Name="Statuses">
-            <EntityTypeMapping TypeName="C2P_CodeChallengeModel.Status">
-              <MappingFragment StoreEntitySet="Statuses">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+        <EntityContainerMapping StorageEntityContainer="C2P_CodeChallengeModelStoreContainer" CdmEntityContainer="TransactionEntity">
           <EntitySetMapping Name="Transactions">
             <EntityTypeMapping TypeName="C2P_CodeChallengeModel.Transaction">
               <MappingFragment StoreEntitySet="Transactions">
@@ -110,7 +52,7 @@
                 <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="CurrencyCode" ColumnName="CurrencyCode" />
                 <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
-                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

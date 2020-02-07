@@ -10,9 +10,9 @@ namespace _2C2P_CodeChallenge.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult UploadFile()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Upload a XML or CSV file.";
 
             return View();
         }

@@ -163,30 +163,33 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Service\ITransactionService.cs" />
-    <Compile Include="IUnitOfWork.cs" />
-    <Compile Include="Models\2C2PModels.Context.cs">
-      <DependentUpon>2C2PModels.Context.tt</DependentUpon>
+    <Compile Include="Models\Transaction.cs">
+      <DependentUpon>TransactionEntity.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\2C2PModels.cs">
-      <DependentUpon>2C2PModels.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\2C2PModels.Designer.cs">
-      <DependentUpon>2C2PModels.edmx</DependentUpon>
+    <Compile Include="Models\TransactionEntity.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>TransactionEntity.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Status.cs">
-      <DependentUpon>2C2PModels.tt</DependentUpon>
+    <Compile Include="Models\TransactionEntity.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TransactionEntity.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Transaction.cs">
-      <DependentUpon>2C2PModels.tt</DependentUpon>
+    <Compile Include="Models\TransactionEntity.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TransactionEntity.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Service\ITransactionService.cs" />
+    <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Service\TransactionService.cs" />
     <Compile Include="UnitOfWork.cs" />
+    <Compile Include="ViewModels\Enum\TransactionStatus.cs" />
+    <Compile Include="ViewModels\TransactionViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -197,20 +200,24 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Models\2C2PModels.Context.tt">
-      <DependentUpon>2C2PModels.edmx</DependentUpon>
+    <Content Include="Models\TransactionEntity.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TransactionEntity.edmx</DependentUpon>
+      <LastGenOutput>TransactionEntity.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\2C2PModels.tt">
-      <DependentUpon>2C2PModels.edmx</DependentUpon>
+    <Content Include="Models\TransactionEntity.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>TransactionEntity.edmx</DependentUpon>
+      <LastGenOutput>TransactionEntity.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <EntityDeploy Include="Models\2C2PModels.edmx">
+    <EntityDeploy Include="Models\TransactionEntity.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>2C2PModels.Designer.cs</LastGenOutput>
+      <LastGenOutput>TransactionEntity.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\2C2PModels.edmx.diagram">
-      <DependentUpon>2C2PModels.edmx</DependentUpon>
+    <Content Include="Models\TransactionEntity.edmx.diagram">
+      <DependentUpon>TransactionEntity.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -237,6 +244,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\UploadFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

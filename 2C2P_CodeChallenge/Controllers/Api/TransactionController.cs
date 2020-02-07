@@ -1,10 +1,15 @@
 ﻿using _2C2P.Services;
+using _2C2P_CodeChallenge.Models;
+using _2C2P_CodeChallenge.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace _2C2P_CodeChallenge.Controllers.Api
 {
@@ -15,7 +20,9 @@ namespace _2C2P_CodeChallenge.Controllers.Api
     [RoutePrefix("api/transaction")]
     public class TransactionController : ApiController
     {
-        private ITransactionService _service;
+        private const string xmlContentType = "application/xml";
+        private const string csvContentType = "text/csv";
+        private readonly ITransactionService _service;
         public TransactionController(ITransactionService service)
         {
             _service = service;
@@ -35,10 +42,114 @@ namespace _2C2P_CodeChallenge.Controllers.Api
         [HttpGet]
         [ResponseType(typeof(object))]
         [Route("")]
-        public IHttpActionResult GetTransactions()
+        public async Task<IHttpActionResult> GetTransactions()
         {
-          var test = _service.GetTransactions();
-          return Ok(test);
+            var test = await _service.GetTransactions();
+            return Ok(test);
+        }
+
+        /// <summary>
+        /// Queries transactions
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">Bad Request</response>
+        [HttpPost]
+        [ResponseType(typeof(object))]
+        [Route("xml")]
+        public async Task<IHttpActionResult> SubmitXmlFile()
+        {
+            try
+            {
+                var resultContent = await Request.Content.ReadAsStreamAsync();
+
+                XPathDocument doc = new XPathDocument(resultContent);
+                XPathNavigator navigator = doc.CreateNavigator();
+                XPathNodeIterator nodes = navigator.Select("/Transactions//Transaction");
+
+                foreach (XPathNavigator item in nodes)
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(item.OuterXml);
+                    XmlElement xe = xmlDoc.DocumentElement;
+
+                    var id = xe.GetAttribute("id");
+                    var date = xe.ChildNodes[0].InnerText;
+                    var amount = xe.ChildNodes[1].ChildNodes[0].InnerText;
+                    var code = xe.ChildNodes[1].ChildNodes[1].InnerText;
+                    var status = xe.ChildNodes[2].InnerText;
+
+                    var transaction = new TransactionViewModel()
+                    {
+                        TransactionId = id,
+                        TransactionDate = Convert.ToDateTime(date),
+                        CurrencyCode = code,
+                        Amount = GetAmount(amount),
+                        Status = GetStatus(status)
+                    };
+
+                    await _service.SaveTransaction(transaction);
+                }
+
+                return Ok("ok");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError();
+            }
+        }
+
+        private TransactionStatus GetStatus(string value)
+        {
+            return (TransactionStatus)System.Enum.Parse(typeof(TransactionStatus), value);
+        }
+
+        private decimal GetAmount(string value)
+        {
+            if (decimal.TryParse(value, out decimal newDecimal))
+                return newDecimal;
+            else
+                throw new FormatException("invalid amount type");
+        }
+
+        /// <summary>
+        /// Queries transactions
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">Bad Request</response>
+        [HttpPost]
+        [ResponseType(typeof(object))]
+        [Route("csv")]
+        public async Task<IHttpActionResult> SubmitCsvFile()
+        {
+            try
+            {
+                var resultContent = await Request.Content.ReadAsStreamAsync();
+
+                if (Request.Content.Headers.ContentType.MediaType == xmlContentType)
+                {
+                    XPathDocument doc = new XPathDocument(resultContent);
+
+                    XPathNavigator navigator = doc.CreateNavigator();
+                    XPathNodeIterator nodes = navigator.Select("/transactions");
+
+                    foreach (XPathNavigator item in nodes)
+                    {
+                        Console.WriteLine(item.Value);
+                    }
+                }
+
+
+                if (Request.Content.Headers.ContentType.MediaType == csvContentType)
+                {
+
+                }
+
+                return Ok("ok");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError();
+            }
         }
     }
 }

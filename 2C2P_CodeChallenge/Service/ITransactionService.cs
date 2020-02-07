@@ -1,11 +1,13 @@
 ﻿using _2C2P_CodeChallenge.Models;
+using _2C2P_CodeChallenge.ViewModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace _2C2P.Services
 {
     public interface ITransactionService
     {
-        List<Transaction> GetTransactions();
-        bool SaveFile();
+        Task<List<Transaction>> GetTransactions();
+        Task<bool> SaveTransaction(TransactionViewModel transaction);
     }
 }

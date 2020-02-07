@@ -5,6 +5,5 @@
     [Amount] DECIMAL NOT NULL, 
     [CurrencyCode] NCHAR(3) NOT NULL, 
     [TransactionDate] DATETIME NOT NULL, 
-    [StatusId] INT NOT NULL, 
-    CONSTRAINT [FK_Transactions_ToStatuses] FOREIGN KEY ([StatusId]) REFERENCES [Statuses]([Id])
+    [Status] NCHAR(10) NOT NULL
 )
