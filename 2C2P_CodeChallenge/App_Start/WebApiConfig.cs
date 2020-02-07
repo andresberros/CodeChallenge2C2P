@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Autofac;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using _2C2P.Services;
+using Autofac.Integration.WebApi;
+using System.Reflection;
 
 namespace _2C2P_CodeChallenge
 {
@@ -13,6 +17,16 @@ namespace _2C2P_CodeChallenge
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            // AutoFac
+            var builder = new ContainerBuilder();
+
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
+            builder.RegisterType<TransactionService>().As<ITransactionService>().InstancePerRequest();
+
+            var container = builder.Build();
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
