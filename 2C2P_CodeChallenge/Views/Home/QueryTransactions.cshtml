@@ -1,50 +1,83 @@
 ﻿@model IEnumerable<_2C2P_CodeChallenge.Models.Transaction>
 
 @{
-    ViewBag.Title = "QueryTransactions";
+    ViewBag.Title = "Query Transactions";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@using (Html.BeginForm("QueryTransactions", "Home", FormMethod.Get))
+{
+    <br />
+    <br />
+    <b> Search Option: </b>@Html.RadioButton("option", "Currency", false, new { onchange = "switchInputs();" }) <text>Currency</text> @Html.RadioButton("option", "Status", false, new { onchange = "switchInputs();" })<text>Status</text>
+    @Html.RadioButton("date", "Date", false, new { onchange = "switchInputs();" }) <text> Date </text>
+    <br />
+    @Html.TextBox("search")
+    <div id="dateInputs" style="display:none">
+        <text> Date From </text><input data-val="true" id="dateFrom" name="dateFrom" type="date" value="08/02/2020" />
+        <text> Date To</text><input data-val="true" id="dateTo" name="dateTo" type="date" value="08/02/2020" />
+    </div>
 
-<h2>Query Transactions</h2>
+    <input type="submit" name="submit" value="Search" />
+    <h2>@Html.ViewBag.Message</h2>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrencyCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.TransactionId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Amount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CurrencyCode)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TransactionDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th></th>
-    </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CurrencyCode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+            </tr>
+        }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.TransactionId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Amount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CurrencyCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TransactionDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-    </tr>
+    </table>
+    <script>
+ 
+        function switchInputs() {
+            let isDate = document.getElementById("date").checked;
+
+            if (isDate) {
+                document.getElementById("dateInputs").style.display = "block";
+                document.getElementById("search").style.display = "none";
+            }
+            else {
+                document.getElementById("dateInputs").style.display = "none";
+                document.getElementById("search").style.display = "block";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            switchInputs();
+        })
+    </script>
 }
-
-</table>
