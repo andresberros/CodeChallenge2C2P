@@ -161,35 +161,7 @@ namespace _2C2P_CodeChallenge.Controllers.Api
         [Route("csv")]
         public async Task<IHttpActionResult> SubmitCsvFile()
         {
-            try
-            {
-                var resultContent = await Request.Content.ReadAsStreamAsync();
-
-                if (Request.Content.Headers.ContentType.MediaType == xmlContentType)
-                {
-                    XPathDocument doc = new XPathDocument(resultContent);
-
-                    XPathNavigator navigator = doc.CreateNavigator();
-                    XPathNodeIterator nodes = navigator.Select("/transactions");
-
-                    foreach (XPathNavigator item in nodes)
-                    {
-                        Console.WriteLine(item.Value);
-                    }
-                }
-
-
-                if (Request.Content.Headers.ContentType.MediaType == csvContentType)
-                {
-
-                }
-
-                return Ok("ok");
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError();
-            }
+            return Ok("not implemented");
         }
     }
 }
