@@ -8,6 +8,6 @@ namespace _2C2P.Services
     public interface ITransactionService
     {
         Task<List<Transaction>> GetTransactions();
-        Task<bool> SaveTransaction(TransactionViewModel transaction);
+        Task<bool> SaveTransactions(List<TransactionViewModel> transaction);
     }
 }

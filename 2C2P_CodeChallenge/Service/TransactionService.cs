@@ -21,28 +21,30 @@ namespace _2C2P.Services
             return list;
         }
 
-        public async Task<bool> SaveTransaction(TransactionViewModel transaction)
+        public async Task<bool> SaveTransactions(List<TransactionViewModel> transactions)
         {
-            if (transaction != null && !string.IsNullOrWhiteSpace(transaction.TransactionId))
+            foreach (var transaction in transactions)
             {
-                if (!_unitOfWork.GetRepository<Transaction>().Exist(t => t.TransactionId == transaction.TransactionId))
+                if (transaction != null && !string.IsNullOrWhiteSpace(transaction.TransactionId))
                 {
-                    var newTransaction = new Transaction()
+                    if (!_unitOfWork.GetRepository<Transaction>().Exist(t => t.TransactionId == transaction.TransactionId))
                     {
-                        TransactionId = transaction.TransactionId,
-                        Status = transaction.Status.ToString(),
-                        Amount = transaction.Amount,
-                        CurrencyCode = transaction.CurrencyCode,
-                        TransactionDate = transaction.TransactionDate
-                    };
+                        var newTransaction = new Transaction()
+                        {
+                            TransactionId = transaction.TransactionId,
+                            Status = transaction.Status.ToString(),
+                            Amount = transaction.Amount,
+                            CurrencyCode = transaction.CurrencyCode,
+                            TransactionDate = transaction.TransactionDate
+                        };
 
-                    _unitOfWork.GetRepository<Transaction>().Add(newTransaction);
-                    await _unitOfWork.CommitAsync();
-                    return true;
+                        _unitOfWork.GetRepository<Transaction>().Add(newTransaction);
+                    }
                 }
             }
 
-            return false;
+            await _unitOfWork.CommitAsync();
+            return true;
         }
     }
 }

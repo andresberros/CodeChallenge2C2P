@@ -11,6 +11,6 @@ namespace _2C2P_CodeChallenge.ViewModels
         public decimal Amount { get; set; }
         public string CurrencyCode { get; set; }
         public System.DateTime TransactionDate { get; set; }
-        public TransactionStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

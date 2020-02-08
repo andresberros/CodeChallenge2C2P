@@ -1,8 +1,10 @@
 ﻿using _2C2P.Services;
 using _2C2P_CodeChallenge.Models;
 using _2C2P_CodeChallenge.ViewModels;
+using ServiceStack;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,6 +12,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using System.Xml;
 using System.Xml.XPath;
+using RouteAttribute = System.Web.Http.RouteAttribute;
 
 namespace _2C2P_CodeChallenge.Controllers.Api
 {
@@ -22,6 +25,7 @@ namespace _2C2P_CodeChallenge.Controllers.Api
     {
         private const string xmlContentType = "application/xml";
         private const string csvContentType = "text/csv";
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly ITransactionService _service;
         public TransactionController(ITransactionService service)
         {
@@ -54,13 +58,17 @@ namespace _2C2P_CodeChallenge.Controllers.Api
         /// <response code="200">OK</response>
         /// <response code="400">Bad Request</response>
         [HttpPost]
-        [ResponseType(typeof(object))]
+        [ResponseType(typeof(void))]
         [Route("xml")]
         public async Task<IHttpActionResult> SubmitXmlFile()
         {
             try
             {
+                var transactions = new List<TransactionViewModel>();
                 var resultContent = await Request.Content.ReadAsStreamAsync();
+
+                if (resultContent.Length > 1024)
+                    return BadRequest("File size it more than 1MB");
 
                 XPathDocument doc = new XPathDocument(resultContent);
                 XPathNavigator navigator = doc.CreateNavigator();
@@ -84,19 +92,51 @@ namespace _2C2P_CodeChallenge.Controllers.Api
                         TransactionDate = Convert.ToDateTime(date),
                         CurrencyCode = code,
                         Amount = GetAmount(amount),
-                        Status = GetStatus(status)
+                        Status = status
                     };
 
-                    await _service.SaveTransaction(transaction);
+                    transactions.Add(transaction);
                 }
 
-                return Ok("ok");
+                var failedTransactions = transactions.Where(t => !IsValidTransaction(t)).ToList();
+
+                if (failedTransactions == null || failedTransactions.Count() == 0)
+                {
+                    await _service.SaveTransactions(transactions);
+                    return Ok();
+                }
+                else
+                {
+                    LogFailedTransactions(failedTransactions);
+                    return BadRequest("Some transactions failed to be validated");
+                }
             }
             catch (Exception ex)
             {
-                return InternalServerError();
+                return InternalServerError(new Exception(ex.Message));
             }
         }
+
+        private void LogFailedTransactions(List<TransactionViewModel> transactions)
+        {
+            logger.Error("Transactions failed. object:{0}", transactions.ToJson());
+        }
+
+        private bool IsValidTransaction(TransactionViewModel transaction)
+        {
+            bool valid = true;
+
+            if (string.IsNullOrEmpty(transaction.TransactionId) || transaction.TransactionId.Length > 50)
+                valid = false;
+            if (transaction.Amount <= 0)
+                valid = false;
+            if (string.IsNullOrEmpty(transaction.CurrencyCode) || transaction.CurrencyCode.Length > 3)
+                valid = false;
+            if (!Enum.TryParse(transaction.Status, out TransactionStatus importance))
+                valid = false;
+            return valid;
+        }
+
 
         private TransactionStatus GetStatus(string value)
         {

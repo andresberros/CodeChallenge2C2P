@@ -1,0 +1,1 @@
+2020-02-08 21:42:38.2892|ERROR|_2C2P_CodeChallenge.Controllers.Api.TransactionController|Transactions failed. object:[{"TransactionId":"Inv00001","Amount":0.00,"CurrencyCode":"USD","TransactionDate":"\/Date(1548204310000-0000)\/","Status":"Done"}]

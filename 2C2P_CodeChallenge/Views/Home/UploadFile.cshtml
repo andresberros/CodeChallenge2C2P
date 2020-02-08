@@ -31,7 +31,6 @@
         file = this.files[0];
 
         if (file.type.match(/xml.*/)) {
-            alert('is xml');
             $.ajax({
                 url: "../api/Transaction/xml",
                 type: "POST",
@@ -39,15 +38,14 @@
                 processData: false,
                 success: function (res) {
                     document.getElementById("response").innerHTML = res;
+                    alert('file uploaded successfully')
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert(xhr.status);
                     alert(thrownError);
                 }
             });
         }
         else if (file.type.match(/csv.*/)) {
-            alert('is csv');
             $.ajax({
                 url: "../api/Transaction/csv",
                 type: "POST",
@@ -55,6 +53,7 @@
                 processData: false,
                 success: function (res) {
                     document.getElementById("response").innerHTML = res;
+                    alert('file uploaded successfully')
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     alert(xhr.status);
@@ -63,7 +62,7 @@
             });
         }
         else {
-            alert('file format not supported');
+            alert('Unknown format');
         }
     }
 </script>
